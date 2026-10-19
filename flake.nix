@@ -16,6 +16,7 @@
           buildInputs = [
             pkgs.ghc
             pkgs.cabal-install
+            pkgs.haskellPackages.haskell-language-server
           ];
         };
       });
