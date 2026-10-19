@@ -1,5 +1,6 @@
 module Parser where
 
+import Control.Applicative
 import Data.Char (isDigit, digitToInt)
 
 newtype Parser a = Parser { runParser :: String -> Maybe (a, String) }
@@ -11,11 +12,17 @@ instance Functor Parser where
 
 instance Applicative Parser where
   pure a = Parser (\s -> Just (a, s))
-  (<*>) a b = Parser (\s -> case runParser a s of
+  a <*> b = Parser (\s -> case runParser a s of
     Nothing -> Nothing
     Just (f, rest1) -> case runParser b rest1 of
       Nothing -> Nothing
       Just (x, rest2) -> Just (f x, rest2))
+
+instance Alternative Parser where
+  empty = Parser (\_ -> Nothing)
+  a <|> b = Parser (\s -> case runParser a s of
+    Nothing -> runParser b s
+    x -> x)
 
 sat :: (Char -> Bool) -> Parser Char
 sat f = Parser (\s -> case s of
@@ -25,6 +32,5 @@ sat f = Parser (\s -> case s of
 parseDigit :: Parser Int
 parseDigit = digitToInt <$> sat isDigit
 
-twoDigits :: Parser (Char, Char)
-twoDigits = (,) <$> sat isDigit <*> sat isDigit
-
+parseInt :: Parser Int
+parseInt = read <$> some (sat isDigit)
