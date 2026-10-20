@@ -12,6 +12,17 @@ data JsonValue
   | JsonObject [(String, JsonValue)]
   deriving (Show, Eq)
 
+parseJson :: Parser JsonValue
+parseJson = token parseJsonValue
+
+parseJsonValue :: Parser JsonValue
+parseJsonValue =
+  parseNull
+    <|> parseBool
+    <|> parseNumber
+    <|> parseString
+    <|> parseArray
+
 parseNull :: Parser JsonValue
 parseNull = JsonNull <$ string "null"
 
@@ -25,14 +36,6 @@ parseBool = parseTrue <|> parseFalse
 
 parseNumber :: Parser JsonValue
 parseNumber = JsonNum <$> parseDouble
-
-parseJsonValue :: Parser JsonValue
-parseJsonValue =
-  parseNull
-    <|> parseBool
-    <|> parseNumber
-    <|> parseString
-    <|> parseArray
 
 -- todo: support for escape sequences
 parseString :: Parser JsonValue
