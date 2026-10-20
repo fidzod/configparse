@@ -32,9 +32,20 @@ parseJsonValue =
     <|> parseBool
     <|> parseNumber
     <|> parseString
+    <|> parseArray
 
 -- todo: support for escape sequences
 parseString :: Parser JsonValue
 parseString = JsonStr <$> text
   where
     text = sat (== '"') *> many (sat (/= '"')) <* sat (== '"')
+
+parseArray :: Parser JsonValue
+parseArray =
+  JsonArray
+    <$> (openBracket *> elems <* closeBracket)
+  where
+    openBracket = token (sat (== '['))
+    closeBracket = token (sat (== ']'))
+    sep = (token (sat (== ',')))
+    elems = sepBy (token parseJsonValue) sep
