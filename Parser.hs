@@ -60,3 +60,9 @@ string (x : xs) = (:) <$> sat (== x) <*> string xs
 
 token :: Parser a -> Parser a
 token p = many (sat isSpace) *> p <* many (sat isSpace)
+
+sepBy1 :: Parser a -> Parser b -> Parser [a]
+sepBy1 p sep = (:) <$> p <*> many (sep *> p)
+
+sepBy :: Parser a -> Parser b -> Parser [a]
+sepBy p sep = sepBy1 p sep <|> pure []
