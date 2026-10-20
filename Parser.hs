@@ -1,7 +1,9 @@
 module Parser where
 
 import Control.Applicative
-import Data.Char (digitToInt, isDigit, isSpace)
+import Control.Monad (replicateM)
+import Data.Char (chr, digitToInt, isDigit, isHexDigit, isSpace)
+import Numeric (readHex)
 
 newtype Parser a = Parser {runParser :: String -> Maybe (a, String)}
 
@@ -58,9 +60,27 @@ string :: String -> Parser String
 string [] = pure ""
 string (x : xs) = (:) <$> sat (== x) <*> string xs
 
--- todo: support for escape sequences
 parseStringLiteral :: Parser String
-parseStringLiteral = sat (== '"') *> many (sat (/= '"')) <* sat (== '"')
+parseStringLiteral = sat (== '"') *> ch <* sat (== '"')
+  where
+    ch = many (parseEscSeq <|> sat (/= '"'))
+    parseEscSeq = parseUnicodeEscape <|> parseFixedEscape
+    parseUnicodeEscape =
+      (chr . read . ("0x" ++))
+        <$> (string "\\u" *> replicateM 4 (sat isHexDigit))
+    parseFixedEscape =
+      foldr1 (<|>) $
+        map (\(c, r) -> r <$ string ['\\', c]) pairs
+    pairs =
+      [ ('"', '"'),
+        ('\\', '\\'),
+        ('/', '/'),
+        ('b', '\b'),
+        ('f', '\f'),
+        ('n', '\n'),
+        ('r', '\r'),
+        ('t', '\t')
+      ]
 
 token :: Parser a -> Parser a
 token p = many (sat isSpace) *> p <* many (sat isSpace)
