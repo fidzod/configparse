@@ -35,11 +35,27 @@ parseInt :: Parser Int
 parseInt = read <$> some (sat isDigit)
 
 parseDouble :: Parser Double
-parseDouble = read <$> wholeNumber
+parseDouble = read . concat <$> sequenceA [sign, intPart, fraction, exponentPart]
   where
-    wholeNumber = (++) <$> intPart <*> fracPart
-    intPart = some (sat isDigit)
-    fracPart = ((:) <$> sat (== '.') <*> intPart) <|> pure ""
+    sign = string "-" <|> pure ""
+
+    intPart =
+      ("0" <$ sat (== '0'))
+        <|> ((:) <$> nonZeroDigit <*> many (sat isDigit))
+
+    nonZeroDigit = sat (\c -> isDigit c && c /= '0')
+
+    digits = some (sat isDigit)
+
+    fraction = ((:) <$> sat (== '.') <*> digits) <|> pure ""
+
+    exponentPart =
+      ( (\e s ds -> e : s ++ ds)
+          <$> sat (`elem` "eE")
+          <*> (string "-" <|> string "+" <|> pure "")
+          <*> digits
+      )
+        <|> pure ""
 
 string :: String -> Parser String
 string [] = pure ""
