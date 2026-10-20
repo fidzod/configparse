@@ -1,7 +1,7 @@
 module Parser where
 
 import Control.Applicative
-import Data.Char (digitToInt, isDigit)
+import Data.Char (digitToInt, isDigit, isSpace)
 
 newtype Parser a = Parser {runParser :: String -> Maybe (a, String)}
 
@@ -58,3 +58,5 @@ string :: String -> Parser String
 string [] = pure ""
 string (x : xs) = (:) <$> sat (== x) <*> string xs
 
+token :: Parser a -> Parser a
+token p = many (sat isSpace) *> p <* many (sat isSpace)
