@@ -53,3 +53,8 @@ parseDouble = read <$> wholeNumber
     wholeNumber = (++) <$> intPart <*> fracPart
     intPart = some (sat isDigit)
     fracPart = ((:) <$> sat (== '.') <*> intPart) <|> pure ""
+
+string :: String -> Parser String
+string [] = pure ""
+string (x : xs) = (:) <$> sat (== x) <*> string xs
+
