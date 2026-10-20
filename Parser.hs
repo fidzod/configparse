@@ -58,6 +58,10 @@ string :: String -> Parser String
 string [] = pure ""
 string (x : xs) = (:) <$> sat (== x) <*> string xs
 
+-- todo: support for escape sequences
+parseStringLiteral :: Parser String
+parseStringLiteral = sat (== '"') *> many (sat (/= '"')) <* sat (== '"')
+
 token :: Parser a -> Parser a
 token p = many (sat isSpace) *> p <* many (sat isSpace)
 

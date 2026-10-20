@@ -22,6 +22,7 @@ parseJsonValue =
     <|> parseNumber
     <|> parseString
     <|> parseArray
+    <|> parseObject
 
 parseNull :: Parser JsonValue
 parseNull = JsonNull <$ string "null"
@@ -37,11 +38,8 @@ parseBool = parseTrue <|> parseFalse
 parseNumber :: Parser JsonValue
 parseNumber = JsonNum <$> parseDouble
 
--- todo: support for escape sequences
 parseString :: Parser JsonValue
-parseString = JsonStr <$> text
-  where
-    text = sat (== '"') *> many (sat (/= '"')) <* sat (== '"')
+parseString = JsonStr <$> parseStringLiteral
 
 parseArray :: Parser JsonValue
 parseArray =
@@ -52,3 +50,13 @@ parseArray =
     closeBracket = token (sat (== ']'))
     sep = (token (sat (== ',')))
     elems = sepBy (token parseJsonValue) sep
+
+parseObject :: Parser JsonValue
+parseObject =
+  JsonObject
+    <$> (openBracket *> pairs <* closeBracket)
+  where
+    openBracket = token (sat (== '{'))
+    closeBracket = token (sat (== '}'))
+    pairs = sepBy pair (token (sat (== ',')))
+    pair = ((,) <$> (token parseStringLiteral)) <* (token (sat (== ':'))) <*> (token parseJsonValue)
