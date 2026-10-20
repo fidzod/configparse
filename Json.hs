@@ -27,4 +27,14 @@ parseNumber :: Parser JsonValue
 parseNumber = JsonNum <$> parseDouble
 
 parseJsonValue :: Parser JsonValue
-parseJsonValue = parseNull <|> parseBool <|> parseNumber
+parseJsonValue =
+  parseNull
+    <|> parseBool
+    <|> parseNumber
+    <|> parseString
+
+-- todo: support for escape sequences
+parseString :: Parser JsonValue
+parseString = JsonStr <$> text
+  where
+    text = sat (== '"') *> many (sat (/= '"')) <* sat (== '"')
