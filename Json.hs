@@ -22,3 +22,9 @@ parseBool = parseTrue <|> parseFalse
     parseTrue = JsonBool True <$ string "true"
     parseFalse :: Parser JsonValue
     parseFalse = JsonBool False <$ string "false"
+
+parseNumber :: Parser JsonValue
+parseNumber = JsonNum <$> parseDouble
+
+parseJsonValue :: Parser JsonValue
+parseJsonValue = parseNull <|> parseBool <|> parseNumber
