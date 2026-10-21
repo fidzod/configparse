@@ -1,0 +1,9 @@
+cabal-version:      2.4
+name:                configparse
+version:             0.1.0.0
+
+executable configparse
+    main-is:          Main.hs
+    other-modules:    Parser, Json
+    build-depends:    base
+    default-language: Haskell2010

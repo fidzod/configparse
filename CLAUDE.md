@@ -1,6 +1,7 @@
-# learning-haskell
+# configparse
 
-A from-scratch JSON parser in Haskell, built as a vehicle for learning the language.
+A from-scratch parser-combinator library in Haskell (JSON now, YAML planned),
+built as a vehicle for learning the language.
 
 ## Environment
 
@@ -47,13 +48,20 @@ parser) and `v2` (full number/string spec compliance + instance cleanup).
 
 ## Roadmap
 
-One loose end before moving on:
-
-- decide whether `parseJson` should require full input consumption (reject
-  trailing garbage) rather than returning leftover input
+`parseJson` now requires full input consumption (an `eof` primitive, `<*`'d
+onto the end) — trailing garbage is rejected rather than silently left over.
 
 Next: a small `main.hs` CLI to run the parser against a file on disk, as its
 own exercise (argument handling, `IO`, reading a file).
+
+After that: parse a subset of YAML, reusing and extending the combinator
+library. Chosen deliberately over the earlier pretty-printer/TOML/line-column
+options — YAML's indentation-significant block structure is genuinely
+context-sensitive (whether a line belongs to the current block depends on a
+previously-parsed indentation value), which is the first real, honest case
+for building a `Monad` instance on `Parser`. Approach: start from a concrete
+target YAML snippet (decide this once `main.hs` is done) and build up the
+grammar incrementally until it parses.
 
 After that, pick one direction via conversation:
 
