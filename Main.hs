@@ -1,6 +1,7 @@
 module Main where
 
 import Parser (Parser(runParser))
+import Pretty (prettyPrint)
 import Json (parseJson)
 import System.Environment (getArgs)
 import System.IO (hPutStrLn, stderr)
@@ -11,7 +12,7 @@ processFile path = do
   text <- readFile path
   case runParser parseJson text of
     Nothing     -> die "Failed to parse"
-    Just (v, _) -> print v
+    Just (v, _) -> putStrLn $ prettyPrint v
 
 main :: IO ()
 main = do

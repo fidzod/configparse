@@ -1,0 +1,40 @@
+{
+  "file_type": "night-market courier record",
+  "record_id": "NC-7F2A-119",
+  "status": "COMPLETE",
+  "last_updated": "03:14:09 GMT",
+  "operator": {
+    "handle": "Glassbird",
+    "real_name": null,
+    "occupation": "freelance data courier",
+    "neural_interface": "retinal overlay / low-grade simstim jack",
+    "known_aliases": [
+      "bird.exe",
+      "Mira-9"
+    ]
+  },
+  "job": {
+    "client": "unverified",
+    "pickup": "rear booth, Kestrel Hotel, Chiba",
+    "drop_point": "dead terminal, Pier 17",
+    "payload": {
+      "name": "blue_lantern.tar",
+      "size": "18.6 MB",
+      "encryption": "custom handshake",
+      "contents": "unknown",
+      "warning": "Payload attempted a connection before the courier opened it."
+    },
+    "payment": {
+      "amount": "4,000 new yen",
+      "method": "anonymous escrow",
+      "release_condition": "confirmed delivery"
+    }
+  },
+  "risk_assessment": {
+    "corporate_interest": "possible",
+    "law_enforcement_interest": "unknown",
+    "payload_behavior": "autonomous activity suspected",
+    "recommended_action": "Do not reconnect the storage device."
+  },
+  "final_note": "Courier reports hearing the same voice through a disconnected payphone on the walk back."
+}
