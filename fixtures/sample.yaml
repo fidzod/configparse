@@ -1,0 +1,20 @@
+# Example configuration for the YAML subset parser
+service:
+  name: configparse
+  version: 2
+  active: true
+  description: "A parser combinator library, written in Haskell"
+  owner: null
+  tags:
+    - parsing
+    - combinators
+    - haskell
+  maintainers:
+    - name: Toby
+      role: lead
+    - name: Ada
+      role: contributor
+  limits:
+    max_connections: 100
+    timeout: 30.5
+  deprecated: false  # not deprecated yet

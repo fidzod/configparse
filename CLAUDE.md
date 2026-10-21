@@ -40,31 +40,38 @@ narrating results for them.
 
 ## Status
 
-Parser combinator library (`Parser.hs`) and full JSON grammar (`Json.hs`) are
-complete and spec-compliant: null, bool, number (incl. negatives, exponents,
-leading-zero rejection), string (incl. escape sequences and `\uXXXX`), array,
-object, arbitrary nesting, whitespace tolerance. Tagged `v1` (initial working
-parser) and `v2` (full number/string spec compliance + instance cleanup).
+- `Parser.hs` / `Json.hs`: complete, spec-compliant JSON parser — null, bool,
+  number (negatives, exponents, leading-zero rejection), string (escape
+  sequences, `\uXXXX`), array, object, arbitrary nesting, whitespace
+  tolerance, full-input-consumption at the top level. Tagged `v1`/`v2`.
+- `Pretty.hs`: indentation-aware `JsonValue -> String` pretty printer,
+  including correct JSON string escaping (the reverse of
+  `parseStringLiteral`'s escape table).
+- `Main.hs`: CLI entrypoint — reads a file, parses it, pretty-prints the
+  result (or a usage/parse-failure message via `die`). Cabal project
+  (`configparse.cabal`); pushed to GitHub (`fidzod/configparse`).
+- `fixtures/`: `sample.json`, `edge-cases.json` (JSON), `sample.yaml` (YAML
+  target, see below).
 
 ## Roadmap
 
-`parseJson` now requires full input consumption (an `eof` primitive, `<*`'d
-onto the end) — trailing garbage is rejected rather than silently left over.
-
-Next: a small `main.hs` CLI to run the parser against a file on disk, as its
-own exercise (argument handling, `IO`, reading a file).
-
-After that: parse a subset of YAML, reusing and extending the combinator
+Current phase: parse a subset of YAML, reusing and extending the combinator
 library. Chosen deliberately over the earlier pretty-printer/TOML/line-column
 options — YAML's indentation-significant block structure is genuinely
 context-sensitive (whether a line belongs to the current block depends on a
-previously-parsed indentation value), which is the first real, honest case
-for building a `Monad` instance on `Parser`. Approach: start from a concrete
-target YAML snippet (decide this once `main.hs` is done) and build up the
-grammar incrementally until it parses.
+previously-parsed indentation value), making it the first real, honest case
+for building a `Monad` instance on `Parser`.
 
-After that, pick one direction via conversation:
+Scope, decided 2026-10-21: block-style mappings and sequences
+(indentation-driven nesting), scalar types (string/int/float/bool/null), and
+comments. Explicitly out of scope for now, to revisit by conversation once
+the core subset works: flow style (`{a: 1}`/`[1,2]`), block scalars (`|`/`>`
+with chomping indicators), anchors/aliases, tags, multi-document streams,
+complex (`? ... :`) keys.
 
-1. *use* the parser for something, e.g. pretty-printing `JsonValue` back to text
-2. parse a different config format (TOML/INI) reusing the combinator library
-3. add line/column-aware error messages to the JSON parser
+Target: `fixtures/sample.yaml` — build up the grammar incrementally until it
+parses this file end to end.
+
+After YAML's core subset works: pick a direction via conversation — options
+raised so far include flow-style/anchors as YAML follow-ons, a different
+config format (TOML/INI), or line/column-aware error messages.
