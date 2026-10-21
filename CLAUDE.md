@@ -25,35 +25,35 @@ narrating results for them.
 ## Learning goals
 
 - Primary: build deep intuition for Functor, Applicative, and Monad via the
-  parser-combinator library. In practice the JSON grammar turned out not to
-  *require* Monad — it's context-free, so Functor/Applicative/Alternative
-  sufficed for all of it except one rule (see roadmap). Monad is still a
-  planned, deliberate exercise.
+  parser-combinator library. In practice, nothing in the JSON grammar ended up
+  *requiring* Monad — it's entirely context-free, so Functor/Applicative/
+  Alternative sufficed for all of it, including leading-zero rejection once
+  `int` was shaped as `"0" | digit19 *DIGIT` rather than "parse digits, then
+  inspect." This generalizes: Monad only earns its keep on context-sensitive
+  grammars (what you parse next depends on an already-parsed *value*, e.g. a
+  length-prefixed string), which JSON/TOML/INI aren't. Monad on `Parser` is
+  still a planned, deliberate exercise — likely a small standalone toy parser
+  (e.g. length-prefixed strings) rather than something JSON forces on us.
 - Secondary (not expected to come up in this project, planned as a follow-on):
   Foldable and Monoid.
 
 ## Status
 
 Parser combinator library (`Parser.hs`) and full JSON grammar (`Json.hs`) are
-done and working end-to-end: null, bool, number, string, array, object,
-arbitrary nesting, whitespace tolerance. Verified against a realistic nested
-document.
+complete and spec-compliant: null, bool, number (incl. negatives, exponents,
+leading-zero rejection), string (incl. escape sequences and `\uXXXX`), array,
+object, arbitrary nesting, whitespace tolerance. Tagged `v1` (initial working
+parser) and `v2` (full number/string spec compliance + instance cleanup).
 
 ## Roadmap
 
-Remaining JSON spec gaps, to close out the current phase:
+One loose end before moving on:
 
-- string escape sequences (`\"`, `\\`, `\n`, `\uXXXX`, ...)
-- negative numbers
-- exponent notation (`1e10`)
-- reject leading zeros (`01` invalid) — the one validation rule that depends
-  on *inspecting a parsed value* rather than a fixed grammar shape, so this is
-  the planned motivated exercise for building Monad on `Parser`
 - decide whether `parseJson` should require full input consumption (reject
   trailing garbage) rather than returning leftover input
 
-Next, after the above: a small `main.hs` CLI to run the parser against a file
-on disk, as its own exercise (argument handling, `IO`, reading a file).
+Next: a small `main.hs` CLI to run the parser against a file on disk, as its
+own exercise (argument handling, `IO`, reading a file).
 
 After that, pick one direction via conversation:
 

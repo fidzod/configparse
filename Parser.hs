@@ -28,6 +28,11 @@ sat f = Parser $ \s -> case s of
   c : cs | f c -> Just (c, cs)
   _ -> Nothing
 
+eof :: Parser ()
+eof = Parser $ \s -> case s of
+  _ : _ -> Nothing
+  _ -> Just ((), s)
+
 parseDigit :: Parser Int
 parseDigit = digitToInt <$> sat isDigit
 

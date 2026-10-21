@@ -13,7 +13,7 @@ data JsonValue
   deriving (Show, Eq)
 
 parseJson :: Parser JsonValue
-parseJson = token parseJsonValue
+parseJson = token parseJsonValue <* eof
 
 parseJsonValue :: Parser JsonValue
 parseJsonValue =
