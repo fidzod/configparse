@@ -1,0 +1,31 @@
+{
+  "numbers": {
+    "integer": 42,
+    "whole_float": 3.0,
+    "fraction": 3.5,
+    "negative": -7,
+    "negative_fraction": -0.25,
+    "zero": 0,
+    "exponent": 1e10,
+    "small": 0.0015
+  },
+  "literals": [true, false, null],
+  "strings": {
+    "plain": "hello",
+    "empty": "",
+    "quotes": "she said \"hi\"",
+    "backslash": "C:\\temp\\file",
+    "whitespace": "line1\nline2\ttabbed\r",
+    "control": "bell\u0007 and backspace\b and formfeed\f",
+    "unicode": "café, naïve, 日本語",
+    "escaped_unicode": "caf\u00e9"
+  },
+  "empty_array": [],
+  "empty_object": {},
+  "nested": [
+    1,
+    [2, [3, []]],
+    { "a": { "b": { "c": [true, null] } } },
+    { "key with \"quotes\"": "value" }
+  ]
+}
